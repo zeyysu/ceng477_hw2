@@ -48,30 +48,31 @@ Matrix4 createRotationMatrix(Rotation *r){
 		if(u.x<=u.z){
 			v.x = 0;
 			v.y = -1*u.z;
-			v.z = v.y;
+			v.z = u.y;
 		}
 		else{
 			v.z = 0;
 			v.y = -1*u.x;
-			v.x = v.y;
+			v.x = u.y;
 		}
 	}
 	else{
 		if(u.y<=u.z){
 			v.y = 0;
 			v.x = -1*u.z;
-			v.z = v.x;
+			v.z = u.x;
 		}
 		else{
 			v.z = 0;
 			v.y = -1*u.x;
-			v.x = v.y;
+			v.x = u.y;
 		}
 	}
 
 	v = normalizeVec3(v);
 	Vec3 w = crossProductVec3(u,v);
 	w = normalizeVec3(w);
+
 	Matrix4 M;
 	M.val[0][0] = u.x;
 	M.val[0][1] = u.y;
@@ -135,7 +136,7 @@ Matrix4 createRotationMatrix(Rotation *r){
 	M_1.val[3][2] = 0;
 	M_1.val[3][3] = 1;
 
-	
+
 	Matrix4 matrix = multiplyMatrixWithMatrix(R,M);
 	matrix = multiplyMatrixWithMatrix(M_1, matrix);
 	return matrix;
@@ -147,23 +148,25 @@ Matrix4 modelingTransformations(Scene *scene, Mesh *mesh){
 	int numberOfTransformations = mesh->numberOfTransformations;
 	int i;
 	Matrix4 matrix = getIdentityMatrix();
+	Matrix4 m2;
 	for(i=0;i<numberOfTransformations;i++){
 		switch(mesh->transformationTypes[i]){
 			case 't':
-				Matrix4 mt = createTranslationMatrix(scene->translations[mesh->transformationIds[i]]);
-				matrix = multiplyMatrixWithMatrix(mt, matrix);
+				m2 = createTranslationMatrix(scene->translations[mesh->transformationIds[i]-1]);
+				matrix = multiplyMatrixWithMatrix(m2, matrix);
 				break;
 			case 's':
-				Matrix4 ms = createScalingMatrix(scene->scalings[mesh->transformationIds[i]]);
-				matrix = multiplyMatrixWithMatrix(ms, matrix);
+				m2 = createScalingMatrix(scene->scalings[mesh->transformationIds[i]-1]);
+				matrix = multiplyMatrixWithMatrix(m2, matrix);
 				break;
 			case 'r':
-				Matrix4 mr = createRotationMatrix(scene->rotations[mesh->transformationIds[i]]);
-				matrix = multiplyMatrixWithMatrix(ms, matrix);
+				m2 = createRotationMatrix(scene->rotations[mesh->transformationIds[i]-1]);
+				matrix = multiplyMatrixWithMatrix(m2, matrix);
 				break;
 			default:
 				break;
 		}
+		// std::cout<<m2<<std::endl;
 	}
 	return matrix;
 };
@@ -271,5 +274,9 @@ Matrix4 createViewportMatrix(Camera *camera){
 	matrix.val[3][3] = 0;
 
 	return matrix;
+}
+
+void raster(Vec3 &v1, Vec3 &v2, Vec3 &v3, bool solid ){
+	
 }
 
