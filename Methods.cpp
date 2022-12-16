@@ -418,7 +418,7 @@ void triangle_raster(Scene *scene, Vec4 &v0, Vec4 &v1, Vec4 &v2, Camera *camera)
 	for(int x=xmin; x<=xmax; x++){
 		if(x<0) continue;
 		if(x>=camera->horRes) break;
-		for(int y=ymin; y<ymax; y++){
+		for(int y=ymin; y<=ymax; y++){
 			if(y<0) continue;
 			if(y>=camera->verRes) break;
 			double alpha = f(x, y, v1.x, v1.y, v2.x, v2.y) / f(v0.x, v0.y, v1.x ,v1.y,v2.x,v2.y);
@@ -445,3 +445,19 @@ void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid, Camera *camer
 	drawLine(scene,v1,v3, camera);
 }
 
+bool backfaceCulling(Vec4 & v1, Vec4 &v2, Vec4& v3 ){
+	Vec3 v1_t;
+	Vec3 v2_t;
+	Vec3 v3_t;
+	
+	v1_t.x = v1.x; v1_t.y=v1.y; v1_t.z= v1.z; v1_t.colorId = v1.colorId;
+	v2_t.x = v2.x; v2_t.y=v2.y; v2_t.z= v2.z; v2_t.colorId = v2.colorId;
+	v3_t.x = v3.x; v3_t.y=v3.y; v3_t.z= v3.z; v3_t.colorId = v3.colorId;
+	Vec3 v1_v2 = subtractVec3(v2_t, v1_t);
+	Vec3 v1_v3 = subtractVec3(v3_t, v1_t);
+	Vec3 normal = crossProductVec3(v1_v2, v1_v3);
+	double dot = dotProductVec3(normal, v1_t);
+	if(dot < 0) return true;
+	return false;
+
+}

@@ -24,3 +24,4 @@ Matrix4 createPersMatrix(Camera *);
 Matrix4 createViewportMatrix(Camera *);
 Matrix4 modelingTransformations(Scene *, Mesh *);
 void raster(Scene *,Vec4 &, Vec4 &, Vec4 &, bool, Camera* );
+bool backfaceCulling(Vec4 &, Vec4 &, Vec4&);

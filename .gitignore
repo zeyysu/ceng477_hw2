@@ -1,2 +1,5 @@
 .DS_Store
 *.ppm
+culling_disabled_inputs/
+culling_enabled_inputs/
+.vscode/

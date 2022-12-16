@@ -71,6 +71,9 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			v3_t = multiplyMatrixWithVec4(projTr,v3_t);
 
 			//TODO: culling and clipping here
+			 if(this-> cullingEnabled && backfaceCulling(v1_t, v2_t, v3_t) == true) { 	
+			 	continue;
+			 }
 
 			//perspective divide
 			std::cout<<v1_t<<std::endl;
