@@ -1,5 +1,5 @@
 #include "Methods.h"
-
+#define PI 3.141592654
 
 Matrix4 createTranslationMatrix(Translation *t){
 	Matrix4 matrix = getIdentityMatrix();
@@ -42,10 +42,9 @@ Matrix4 createRotationMatrix(Rotation *r){
 	u.z = r->uz;
 
 	u = normalizeVec3(u);
-
 	Vec3 v;
-	if(u.x<=u.y){
-		if(u.x<=u.z){
+	if(abs(u.x)<=abs(u.y)){
+		if(abs(u.x)<=abs(u.z)){
 			v.x = 0;
 			v.y = -1*u.z;
 			v.z = u.y;
@@ -57,7 +56,7 @@ Matrix4 createRotationMatrix(Rotation *r){
 		}
 	}
 	else{
-		if(u.y<=u.z){
+		if(abs(u.y)<=abs(u.z)){
 			v.y = 0;
 			v.x = -1*u.z;
 			v.z = u.x;
@@ -95,19 +94,20 @@ Matrix4 createRotationMatrix(Rotation *r){
 	M.val[3][3] = 1;
 
 	Matrix4 R;
+	double rad = (r->angle*PI)/180;
 	R.val[0][0] = 1;
 	R.val[0][1] = 0;
 	R.val[0][2] = 0;
 	R.val[0][3] = 0;
 
 	R.val[1][0] = 0;
-	R.val[1][1] = cos(r->angle);
-	R.val[1][2] = -1*sin(r->angle);
+	R.val[1][1] = cos(rad);
+	R.val[1][2] = -1*sin(rad);
 	R.val[1][3] = 0;
 
 	R.val[2][0] = 0;
-	R.val[2][1] = sin(r->angle);
-	R.val[2][2] = cos(r->angle);
+	R.val[2][1] = sin(rad);
+	R.val[2][2] = cos(rad);
 	R.val[2][3] = 0;
 
 	R.val[3][0] = 0;
