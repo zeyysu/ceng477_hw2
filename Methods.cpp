@@ -175,17 +175,17 @@ Matrix4 cameraTransformation(Camera *camera){
 	matrix.val[0][0] = camera->u.x;
     matrix.val[0][1] = camera->u.y;
     matrix.val[0][2] = camera->u.z;
-   	matrix.val[0][3] = -1*(camera->u.x*camera->pos.x + camera->u.y*camera->pos.y + camera->u.z*camera->pos.z);
+   	matrix.val[0][3] = (-1.0)*(camera->u.x*camera->pos.x + camera->u.y*camera->pos.y + camera->u.z*camera->pos.z);
 
     matrix.val[1][0] = camera->v.x;
     matrix.val[1][1] = camera->v.y;
     matrix.val[1][2] = camera->v.z;
-    matrix.val[1][3] = -1*(camera->v.x*camera->pos.x + camera->v.y*camera->pos.y + camera->v.z*camera->pos.z);
+    matrix.val[1][3] = (-1.0)*(camera->v.x*camera->pos.x + camera->v.y*camera->pos.y + camera->v.z*camera->pos.z);
 
     matrix.val[2][0] = camera->w.x;
     matrix.val[2][1] = camera->w.y;
     matrix.val[2][2] = camera->w.z;
-    matrix.val[2][3] = -1*(camera->w.x*camera->pos.x + camera->w.y*camera->pos.y + camera->w.z*camera->pos.z);
+    matrix.val[2][3] = (-1.0)*(camera->w.x*camera->pos.x + camera->w.y*camera->pos.y + camera->w.z*camera->pos.z);
 
     matrix.val[3][0] = 0.0;
     matrix.val[3][1] = 0.0;
@@ -199,25 +199,25 @@ Matrix4 cameraTransformation(Camera *camera){
 Matrix4 createOrtMatrix(Camera *camera){
 	Matrix4 matrix;
 
-	matrix.val[0][0] = 2/(camera->right - camera->left);
+	matrix.val[0][0] = 2.0/(camera->right - camera->left);
 	matrix.val[0][1] = 0;
 	matrix.val[0][2] = 0;
-	matrix.val[0][3] = -1*(camera->right + camera->left)/(camera->right - camera->left);
+	matrix.val[0][3] = (-1.0)*(camera->right + camera->left)/(camera->right - camera->left);
 
 	matrix.val[1][0] = 0;
-	matrix.val[1][1] =  2/(camera->top - camera->bottom);
+	matrix.val[1][1] =  2.0/(camera->top - camera->bottom);
 	matrix.val[1][2] = 0;
-	matrix.val[1][3] = -1*(camera->top + camera->bottom)/(camera->top - camera->bottom);
+	matrix.val[1][3] = (-1.0)*(camera->top + camera->bottom)/(camera->top - camera->bottom);
 
 	matrix.val[2][0] = 0;
 	matrix.val[2][1] = 0;
-	matrix.val[2][2] =  -1*2/(camera->far - camera->near);
-	matrix.val[2][3] = -1*(camera->far + camera->near)/(camera->far - camera->near);
+	matrix.val[2][2] =  (-2.0)/(camera->far - camera->near);
+	matrix.val[2][3] = (-1.0)*(camera->far + camera->near)/(camera->far - camera->near);
 
 	matrix.val[3][0] = 0;
 	matrix.val[3][1] = 0;
 	matrix.val[3][2] = 0;
-	matrix.val[3][3] = 1;
+	matrix.val[3][3] = 1.0;
 
 	return matrix;
 
@@ -226,24 +226,24 @@ Matrix4 createOrtMatrix(Camera *camera){
 Matrix4 createPersMatrix(Camera *camera){
 	Matrix4 matrix;
 
-	matrix.val[0][0] = (2*camera->near)/(camera->right - camera->left);
+	matrix.val[0][0] = (2.0*camera->near)/(camera->right - camera->left);
 	matrix.val[0][1] = 0;
 	matrix.val[0][2] = (camera->right + camera->left)/(camera->right - camera->left);
 	matrix.val[0][3] = 0;
 
 	matrix.val[1][0] = 0;
-	matrix.val[1][1] =  (2*camera->near)/(camera->top - camera->bottom);
+	matrix.val[1][1] =  (2.0*camera->near)/(camera->top - camera->bottom);
 	matrix.val[1][2] = (camera->top + camera->bottom)/(camera->top - camera->bottom);
 	matrix.val[1][3] = 0;
 
 	matrix.val[2][0] = 0;
 	matrix.val[2][1] = 0;
-	matrix.val[2][2] =  -1*(camera->far + camera->near)/(camera->far - camera->near);
-	matrix.val[2][3] = -2*(camera->far * camera->near)/(camera->far - camera->near);
+	matrix.val[2][2] =  (-1.0)*(camera->far + camera->near)/(camera->far - camera->near);
+	matrix.val[2][3] = (-2.0)*(camera->far * camera->near)/(camera->far - camera->near);
 
 	matrix.val[3][0] = 0;
 	matrix.val[3][1] = 0;
-	matrix.val[3][2] = -1;
+	matrix.val[3][2] = -1.0;
 	matrix.val[3][3] = 0;
 
 	return matrix;
@@ -252,20 +252,20 @@ Matrix4 createPersMatrix(Camera *camera){
 Matrix4 createViewportMatrix(Camera *camera){
 	Matrix4 matrix;
 
-	matrix.val[0][0] = camera->horRes/2;
+	matrix.val[0][0] = camera->horRes/2.0;
 	matrix.val[0][1] = 0;
 	matrix.val[0][2] = 0;
-	matrix.val[0][3] = (camera->horRes-1)/2;
+	matrix.val[0][3] = (camera->horRes-1)/2.0;
 
 	matrix.val[1][0] = 0;
-	matrix.val[1][1] = camera->verRes/2;
+	matrix.val[1][1] = camera->verRes/2.0;
 	matrix.val[1][2] = 0;
-	matrix.val[1][3] = (camera->verRes-1)/2;
+	matrix.val[1][3] = (camera->verRes-1)/2.0;
 
 	matrix.val[2][0] = 0;
 	matrix.val[2][1] = 0;
-	matrix.val[2][2] = 1/2;
-	matrix.val[2][3] = 1/2;
+	matrix.val[2][2] = 0.5;
+	matrix.val[2][3] = 0.5;
 
 	matrix.val[3][0] = 0;
 	matrix.val[3][1] = 0;
@@ -276,8 +276,8 @@ Matrix4 createViewportMatrix(Camera *camera){
 }
 
 
-void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
-	double x,y;
+void drawLine(Scene *scene, Vec4&v1, Vec4 &v2, Camera *camera){
+	int x,y;
 	double d;
 	double y0,y1;
 	double x0,x1;
@@ -291,24 +291,20 @@ void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
 		x1 = v2.x;
 		y0 = v1.y;
 		y1 = v2.y;
-		std::cout<<"color id?1"<<std::endl;
 		c = *scene->colorsOfVertices[v1.colorId-1];
 		dc.r = (scene->colorsOfVertices[v2.colorId-1]->r - scene->colorsOfVertices[v1.colorId-1]->r)/(x1-x0);
 		dc.g = (scene->colorsOfVertices[v2.colorId-1]->g - scene->colorsOfVertices[v1.colorId-1]->g)/(x1-x0);
 		dc.b = (scene->colorsOfVertices[v2.colorId-1]->b - scene->colorsOfVertices[v1.colorId-1]->b)/(x1-x0);
-		std::cout<<"color id"<<std::endl;
 		}
 		else{
 		x0 = v2.x;
 		x1 = v1.x;
 		y0 = v2.y;
 		y1 = v1.y;
-		std::cout<<"color id?2"<<std::endl;
 		c = *scene->colorsOfVertices[v2.colorId-1];
 		dc.r = (scene->colorsOfVertices[v1.colorId-1]->r - scene->colorsOfVertices[v2.colorId-1]->r)/(x1-x0);
 		dc.g = (scene->colorsOfVertices[v1.colorId-1]->g - scene->colorsOfVertices[v2.colorId-1]->g)/(x1-x0);
 		dc.b = (scene->colorsOfVertices[v1.colorId-1]->b - scene->colorsOfVertices[v2.colorId-1]->b)/(x1-x0);
-		std::cout<<"color id"<<std::endl;
 		}
 		y = y0;
 		int dy = y0<y1? (y0-y1) : (y1-y0);
@@ -317,7 +313,18 @@ void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
 		for(x = x0; x <= x1; x+=1){
 			std::cout<<d<<std::endl;
 			std::cout<<x<<" "<<y<<std::endl;
-			scene->image[round(x)][round(y)] = c;
+			if(x<0) continue;
+			if(y<0){
+				if(y0<y1) {y+=1; continue;}
+				else break;
+			}
+			if(x >= camera->horRes) break;
+			if(y >= (camera->verRes)){
+				if(y0<y1) break;
+				else y-=1;
+				continue;
+			}
+			scene->image[x][y] = c;
 			if(d<0){
 				if(y0<y1) y+=1;
 				else y-=1;
@@ -337,34 +344,39 @@ void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
 			y1 = v2.y;
 			x0 = v1.x;
 			x1 = v2.x;
-			std::cout<<"color id?3 "<<v1.colorId<<" "<<scene->colorsOfVertices.size()<<std::endl;
 			c = *scene->colorsOfVertices[v1.colorId-1];
-			std::cout<<c<<std::endl;
 			dc.r = (scene->colorsOfVertices[v2.colorId-1]->r - scene->colorsOfVertices[v1.colorId-1]->r)/(y1-y0);
 			dc.g = (scene->colorsOfVertices[v2.colorId-1]->g - scene->colorsOfVertices[v1.colorId-1]->g)/(y1-y0);
 			dc.b = (scene->colorsOfVertices[v2.colorId-1]->b - scene->colorsOfVertices[v1.colorId-1]->b)/(y1-y0);
-			std::cout<<"color id"<<std::endl;
 		}
 		else{
 			y0 = v2.y;
 			y1 = v1.y;
 			x0 = v2.x;
 			x1 = v1.x;
-			std::cout<<"color id?4"<<v2.colorId<<std::endl;
 			c = *scene->colorsOfVertices[v2.colorId-1];
 			dc.r = (scene->colorsOfVertices[v1.colorId-1]->r - scene->colorsOfVertices[v2.colorId-1]->r)/(y1-y0);
 			dc.g = (scene->colorsOfVertices[v1.colorId-1]->g - scene->colorsOfVertices[v2.colorId-1]->g)/(y1-y0);
 			dc.b = (scene->colorsOfVertices[v1.colorId-1]->b - scene->colorsOfVertices[v2.colorId-1]->b)/(y1-y0);
-			std::cout<<"color id"<<std::endl;
 		}
 		x = x0;
 		int dy = x0<x1? (x0-x1) : (x1-x0);
 		d = 2*dy + 0.5*(y1-y0);
 
 		for(y = y0; y <= y1; y+=1){
-			std::cout<<d<<std::endl;
-			std::cout<<x<<" "<<y<<std::endl;
-			scene->image[round(x)][round(y)] = c;
+			if(y<0) continue;
+			if(x<0){
+				if(x0<x1) {x+=1; continue;}
+				else break;
+			}
+			if(y >= camera->verRes) break;
+			if(x >= (camera->horRes)){
+				if(x0<x1) break;
+				else x-=1;
+				continue;
+			}
+			
+			scene->image[x][y] = c;
 			if(d<0){
 				if(x0<x1) x+=1;
 				else x-=1;
@@ -381,13 +393,55 @@ void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
 	
 }
 
+double f(double x, double y, double x_0, double y_0, double x_1, double y_1){
+    return x * (y_0 - y_1) + y * (x_1 - x_0) + (x_0 * y_1) - (y_0 * x_1);
+}
 
-void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid ){
-	drawLine(scene,v1,v2);
-	drawLine(scene,v2,v3);
-	drawLine(scene,v1,v3);
 
-	
+void triangle_raster(Scene *scene, Vec4 &v0, Vec4 &v1, Vec4 &v2, Camera *camera){
+	double xmin = min(v1.x, v2.x);
+	xmin = min(xmin, v0.x);
+	xmin= round(xmin);
+	double ymin =  min(v1.y, v2.y);
+	ymin = min(ymin, v0.y);
+	ymin = round(ymin);
+	double xmax = max(v1.x, v2.x);
+	xmax = max(xmax, v0.x);
+	xmax = round(xmax);
+	double ymax = max(v1.y, v2.y);
+	ymax = max(ymax, v0.y);
+	ymax = round(ymax);
+	Color c0 =  *(scene->colorsOfVertices[v0.colorId-1]);
+	Color c1 =  *(scene->colorsOfVertices[v1.colorId-1]);
+	Color c2 =  *(scene->colorsOfVertices[v2.colorId-1]);
+	Color c;
+	for(int x=xmin; x<=xmax; x++){
+		if(x<0) continue;
+		if(x>=camera->horRes) break;
+		for(int y=ymin; y<ymax; y++){
+			if(y<0) continue;
+			if(y>=camera->verRes) break;
+			double alpha = f(x, y, v1.x, v1.y, v2.x, v2.y) / f(v0.x, v0.y, v1.x ,v1.y,v2.x,v2.y);
+			double beta = f(x, y ,v2.x ,v2.y,v0.x,v0.y) /  f(v1.x, v1.y ,v2.x ,v2.y,v0.x,v0.y);
+			double gama =  f(x, y ,v0.x ,v0.y,v1.x,v1.y) / f(v2.x, v2.y ,v0.x ,v0.y,v1.x,v1.y);
+			if(alpha>=0 & beta >=0 && gama>=0){
+			c.r = alpha*c0.r + beta*c1.r + gama*c2.r;
+			c.g = alpha*c0.g + beta*c1.g + gama*c2.g;
+			c.b = alpha*c0.b + beta*c1.b + gama*c2.b;
+			scene->image[x][y] = c;
+			}
+		}
+	}
 
+}
+
+void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid, Camera *camera ){
+	if(solid){
+		triangle_raster(scene, v1,v2,v3,camera);
+		return;
+	}
+	drawLine(scene,v1,v2, camera);
+	drawLine(scene,v2,v3, camera);
+	drawLine(scene,v1,v3, camera);
 }
 

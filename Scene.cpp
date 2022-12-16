@@ -41,10 +41,7 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 	else projTr = createOrtMatrix(camera);
 	Matrix4 viewTr = createViewportMatrix(camera);
 
-	//perspective before multiplying do perspective divide!!
-	Matrix4 perxcam = multiplyMatrixWithMatrix(projTr, camTr);
-
-	for(i=0;i<numberOfmeshes;i++){
+	for(i = 0; i < numberOfmeshes; i++){
 		//model transform
 		Matrix4 modelTr = modelingTransformations(this, this->meshes[i]);
 		//viewtr * (divide) perxcam * model * vertices
@@ -62,15 +59,23 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 
 			//apply model, camera and perspective transformations
 			v1_t = multiplyMatrixWithVec4(modelTr, v1_t);
-			v1_t = multiplyMatrixWithVec4(perxcam, v1_t);
+			v1_t = multiplyMatrixWithVec4(camTr, v1_t);
+			v1_t = multiplyMatrixWithVec4(projTr,v1_t);
+
 			v2_t = multiplyMatrixWithVec4(modelTr, v2_t);
-			v2_t = multiplyMatrixWithVec4(perxcam, v2_t);
+			v2_t = multiplyMatrixWithVec4(camTr, v2_t);
+			v2_t = multiplyMatrixWithVec4(projTr,v2_t);
+
 			v3_t = multiplyMatrixWithVec4(modelTr, v3_t);
-			v3_t = multiplyMatrixWithVec4(perxcam, v3_t);
+			v3_t = multiplyMatrixWithVec4(camTr, v3_t);
+			v3_t = multiplyMatrixWithVec4(projTr,v3_t);
 
 			//TODO: culling and clipping here
 
 			//perspective divide
+			std::cout<<v1_t<<std::endl;
+			std::cout<<v2_t<<std::endl;
+			std::cout<<v3_t<<std::endl;
 			if(v1_t.t != 1 && v1_t.t != 0) {v1_t.x = v1_t.x/v1_t.t; v1_t.y = v1_t.y/v1_t.t; v1_t.z = v1_t.z/v1_t.t; v1_t.t = 1;}
 			if(v2_t.t != 1 && v2_t.t != 0) {v2_t.x = v2_t.x/v2_t.t; v2_t.y = v2_t.y/v2_t.t; v2_t.z = v2_t.z/v2_t.t; v2_t.t = 1;}
 			if(v3_t.t != 1 && v3_t.t != 0) {v3_t.x = v3_t.x/v3_t.t; v3_t.y = v3_t.y/v3_t.t; v3_t.z = v3_t.z/v3_t.t; v3_t.t = 1;}
@@ -80,13 +85,11 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			v2_t = multiplyMatrixWithVec4(viewTr, v2_t);
 			v3_t = multiplyMatrixWithVec4(viewTr, v3_t);
 
-			std::cout<<"here"<<std::endl;
 
-			// std::cout<<v1_t.x<<" "<<v1_t.y<<" "<<v1_t.z<<std::endl;
-			// std::cout<<v2_t.x<<" "<<v2_t.y<<" "<<v2_t.z<<std::endl;
-			// std::cout<<v3_t.x<<" "<<v3_t.y<<" "<<v3_t.z<<std::endl;
-			raster(this,v1_t,v2_t,v3_t,false);
-			std::cout<<"triangle"<<t<<" "<<meshes[i]->numberOfTriangles<<std::endl;
+			std::cout<<v1_t<<std::endl;
+			std::cout<<v2_t<<std::endl;
+			std::cout<<v3_t<<std::endl;
+			raster(this,v1_t,v2_t,v3_t,(meshes[i]->type==1), camera);
 			
 		}
 		
@@ -198,7 +201,6 @@ Scene::Scene(const char *xmlPath)
 
 		str = pVertex->Attribute("color");
 		sscanf(str, "%lf %lf %lf", &color->r, &color->g, &color->b);
-		std::cout<<vertexId<<std::endl;
 
 		vertices.push_back(vertex);
 		colorsOfVertices.push_back(color);
