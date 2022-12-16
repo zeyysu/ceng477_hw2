@@ -48,10 +48,10 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 		//model transform
 		Matrix4 modelTr = modelingTransformations(this, this->meshes[i]);
 		//viewtr * (divide) perxcam * model * vertices
-		for(t=0; t<meshes[i]->numberOfTriangles;t++){
-			Vec3 *v1 =  this->vertices[meshes[i]->triangles[t].getFirstVertexId()];
-			Vec3 *v2 =  this->vertices[meshes[i]->triangles[t].getSecondVertexId()];
-			Vec3 *v3 =  this->vertices[meshes[i]->triangles[t].getThirdVertexId()];
+		for(t=0; t< meshes[i]->numberOfTriangles ; t++){
+			Vec3 *v1 =  this->vertices[meshes[i]->triangles[t].getFirstVertexId()-1];
+			Vec3 *v2 =  this->vertices[meshes[i]->triangles[t].getSecondVertexId()-1];
+			Vec3 *v3 =  this->vertices[meshes[i]->triangles[t].getThirdVertexId()-1];
 			
 			Vec4 v1_t;
 			Vec4 v2_t;
@@ -80,13 +80,16 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			v2_t = multiplyMatrixWithVec4(viewTr, v2_t);
 			v3_t = multiplyMatrixWithVec4(viewTr, v3_t);
 
-			std::cout<<v1_t.x<<" "<<v1_t.y<<" "<<v1_t.z<<std::endl;
+			std::cout<<"here"<<std::endl;
+
+			// std::cout<<v1_t.x<<" "<<v1_t.y<<" "<<v1_t.z<<std::endl;
+			// std::cout<<v2_t.x<<" "<<v2_t.y<<" "<<v2_t.z<<std::endl;
+			// std::cout<<v3_t.x<<" "<<v3_t.y<<" "<<v3_t.z<<std::endl;
+			raster(this,v1_t,v2_t,v3_t,false);
+			std::cout<<"triangle"<<t<<" "<<meshes[i]->numberOfTriangles<<std::endl;
 			
-
-
-
-
 		}
+		
 		
 	}
 
@@ -195,6 +198,7 @@ Scene::Scene(const char *xmlPath)
 
 		str = pVertex->Attribute("color");
 		sscanf(str, "%lf %lf %lf", &color->r, &color->g, &color->b);
+		std::cout<<vertexId<<std::endl;
 
 		vertices.push_back(vertex);
 		colorsOfVertices.push_back(color);

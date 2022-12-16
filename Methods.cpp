@@ -166,7 +166,6 @@ Matrix4 modelingTransformations(Scene *scene, Mesh *mesh){
 			default:
 				break;
 		}
-		// std::cout<<m2<<std::endl;
 	}
 	return matrix;
 };
@@ -276,7 +275,119 @@ Matrix4 createViewportMatrix(Camera *camera){
 	return matrix;
 }
 
-void raster(Vec3 &v1, Vec3 &v2, Vec3 &v3, bool solid ){
+
+void drawLine(Scene *scene, Vec4&v1, Vec4 &v2){
+	double x,y;
+	double d;
+	double y0,y1;
+	double x0,x1;
+	Color c;
+	Color dc;
+	double slope = 0;
+	if(x1!=x0) slope = abs(v1.y-v2.y)/abs(v1.x-v2.x);
+	if(slope<=1){
+		if( v1.x <= v2.x ){
+		x0 = v1.x;
+		x1 = v2.x;
+		y0 = v1.y;
+		y1 = v2.y;
+		std::cout<<"color id?1"<<std::endl;
+		c = *scene->colorsOfVertices[v1.colorId-1];
+		dc.r = (scene->colorsOfVertices[v2.colorId-1]->r - scene->colorsOfVertices[v1.colorId-1]->r)/(x1-x0);
+		dc.g = (scene->colorsOfVertices[v2.colorId-1]->g - scene->colorsOfVertices[v1.colorId-1]->g)/(x1-x0);
+		dc.b = (scene->colorsOfVertices[v2.colorId-1]->b - scene->colorsOfVertices[v1.colorId-1]->b)/(x1-x0);
+		std::cout<<"color id"<<std::endl;
+		}
+		else{
+		x0 = v2.x;
+		x1 = v1.x;
+		y0 = v2.y;
+		y1 = v1.y;
+		std::cout<<"color id?2"<<std::endl;
+		c = *scene->colorsOfVertices[v2.colorId-1];
+		dc.r = (scene->colorsOfVertices[v1.colorId-1]->r - scene->colorsOfVertices[v2.colorId-1]->r)/(x1-x0);
+		dc.g = (scene->colorsOfVertices[v1.colorId-1]->g - scene->colorsOfVertices[v2.colorId-1]->g)/(x1-x0);
+		dc.b = (scene->colorsOfVertices[v1.colorId-1]->b - scene->colorsOfVertices[v2.colorId-1]->b)/(x1-x0);
+		std::cout<<"color id"<<std::endl;
+		}
+		y = y0;
+		int dy = y0<y1? (y0-y1) : (y1-y0);
+		d = 2*dy + 0.5*(x1-x0);
+
+		for(x = x0; x <= x1; x+=1){
+			std::cout<<d<<std::endl;
+			std::cout<<x<<" "<<y<<std::endl;
+			scene->image[round(x)][round(y)] = c;
+			if(d<0){
+				if(y0<y1) y+=1;
+				else y-=1;
+				d+= 2*(dy + (x1-x0));
+			}
+			else{
+				d+= 2*dy;
+			}
+			c.r += dc.r;
+			c.g += dc.g;
+			c.b += dc.b;
+		}
+	}
+	else{
+		if( v1.y <= v2.y ){
+			y0 = v1.y;
+			y1 = v2.y;
+			x0 = v1.x;
+			x1 = v2.x;
+			std::cout<<"color id?3 "<<v1.colorId<<" "<<scene->colorsOfVertices.size()<<std::endl;
+			c = *scene->colorsOfVertices[v1.colorId-1];
+			std::cout<<c<<std::endl;
+			dc.r = (scene->colorsOfVertices[v2.colorId-1]->r - scene->colorsOfVertices[v1.colorId-1]->r)/(y1-y0);
+			dc.g = (scene->colorsOfVertices[v2.colorId-1]->g - scene->colorsOfVertices[v1.colorId-1]->g)/(y1-y0);
+			dc.b = (scene->colorsOfVertices[v2.colorId-1]->b - scene->colorsOfVertices[v1.colorId-1]->b)/(y1-y0);
+			std::cout<<"color id"<<std::endl;
+		}
+		else{
+			y0 = v2.y;
+			y1 = v1.y;
+			x0 = v2.x;
+			x1 = v1.x;
+			std::cout<<"color id?4"<<v2.colorId<<std::endl;
+			c = *scene->colorsOfVertices[v2.colorId-1];
+			dc.r = (scene->colorsOfVertices[v1.colorId-1]->r - scene->colorsOfVertices[v2.colorId-1]->r)/(y1-y0);
+			dc.g = (scene->colorsOfVertices[v1.colorId-1]->g - scene->colorsOfVertices[v2.colorId-1]->g)/(y1-y0);
+			dc.b = (scene->colorsOfVertices[v1.colorId-1]->b - scene->colorsOfVertices[v2.colorId-1]->b)/(y1-y0);
+			std::cout<<"color id"<<std::endl;
+		}
+		x = x0;
+		int dy = x0<x1? (x0-x1) : (x1-x0);
+		d = 2*dy + 0.5*(y1-y0);
+
+		for(y = y0; y <= y1; y+=1){
+			std::cout<<d<<std::endl;
+			std::cout<<x<<" "<<y<<std::endl;
+			scene->image[round(x)][round(y)] = c;
+			if(d<0){
+				if(x0<x1) x+=1;
+				else x-=1;
+				d+= 2*(dy + (y1-y0));
+			}
+			else{
+				d+= 2*dy;
+			}
+			c.r += dc.r;
+			c.g += dc.g;
+			c.b += dc.b;
+		}
+	}
 	
+}
+
+
+void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid ){
+	drawLine(scene,v1,v2);
+	drawLine(scene,v2,v3);
+	drawLine(scene,v1,v3);
+
+	
+
 }
 

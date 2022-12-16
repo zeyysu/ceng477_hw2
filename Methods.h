@@ -23,3 +23,4 @@ Matrix4 createOrtMatrix(Camera *);
 Matrix4 createPersMatrix(Camera *);
 Matrix4 createViewportMatrix(Camera *);
 Matrix4 modelingTransformations(Scene *, Mesh *);
+void raster(Scene *,Vec4 &, Vec4 &, Vec4 &, bool );
