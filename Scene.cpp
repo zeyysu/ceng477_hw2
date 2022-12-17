@@ -57,7 +57,7 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			v2_t.x = v2->x; v2_t.y=v2->y; v2_t.z= v2->z; v2_t.t = 1; v2_t.colorId = v2->colorId;
 			v3_t.x = v3->x; v3_t.y=v3->y; v3_t.z= v3->z; v3_t.t = 1; v3_t.colorId = v3->colorId;
 
-			//apply model, camera and perspective transformations
+			//apply model, camera and projection transformations
 			v1_t = multiplyMatrixWithVec4(modelTr, v1_t);
 			v1_t = multiplyMatrixWithVec4(camTr, v1_t);
 			v1_t = multiplyMatrixWithVec4(projTr,v1_t);
@@ -70,7 +70,7 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			v3_t = multiplyMatrixWithVec4(camTr, v3_t);
 			v3_t = multiplyMatrixWithVec4(projTr,v3_t);
 
-			//TODO: culling and clipping here
+			//culling
 			 if(this-> cullingEnabled && backfaceCulling(v1_t, v2_t, v3_t) == true) { 	
 			 	continue;
 			 }
@@ -95,12 +95,6 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 				bool v1v2Clipped  = clippedLine(this,v01_1, v01_2,*c1,*c2);
 				bool v2v3Clipped = clippedLine(this,v12_1, v12_2,*c2,*c3);
 				bool v3v1Clipped = clippedLine(this,v20_1, v20_2,*c3,*c1);
-				//  if(v01_1.t != 1 && v01_1.t != 0) { v01_1.x =  v01_1.x/ v01_1.t;  v01_1.y =  v01_1.y/ v01_1.t;  v01_1.z =  v01_1.z/ v01_1.t;  v01_1.t = 1;}
-				//  if(v01_2.t != 1 && v01_2.t != 0) { v01_2.x =  v01_2.x/ v01_2.t;  v01_2.y =  v01_2.y/ v01_2.t;  v01_2.z =  v01_2.z/ v01_2.t;  v01_2.t = 1;}
-				//  if(v12_1.t != 1 && v12_1.t != 0) { v12_1.x =  v12_1.x/ v12_1.t;  v12_1.y =  v12_1.y/ v12_1.t;  v12_1.z =  v12_1.z/ v12_1.t;  v12_1.t = 1;}
-				//  if(v12_2.t != 1 && v12_2.t != 0) { v12_2.x =  v12_2.x/ v12_2.t;  v12_2.y =  v12_2.y/ v12_2.t; v12_2.z =  v12_2.z/ v12_2.t;  v12_2.t = 1;}
-				//  if(v20_1.t != 1 && v20_1.t != 0) { v20_1.x =  v20_1.x/ v20_1.t;  v20_1.y =  v20_1.y/ v20_1.t;  v20_1.z =  v20_1.z/ v20_1.t;  v20_1.t = 1;}
-				//  if(v20_2.t != 1 && v20_2.t != 0) { v20_2.x =  v20_2.x/ v20_2.t;  v20_2.y =  v20_2.y/ v20_2.t;  v20_2.z =  v20_2.z/v20_2.t; v20_2.t = 1;}
 				//apply viewport transformation
 				v01_1 = multiplyMatrixWithVec4(viewTr, v01_1);
 				v01_2 = multiplyMatrixWithVec4(viewTr,v01_2);
@@ -137,7 +131,6 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			}
 			
 		}
-		
 		
 	}
 

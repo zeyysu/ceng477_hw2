@@ -433,13 +433,6 @@ void triangle_raster(Scene *scene, Vec4 &v0, Vec4 &v1, Vec4 &v2, Camera *camera)
 
 }
 
-// void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid, Camera *camera ){
-// 	if(solid){
-// 		triangle_raster(scene, v1,v2,v3,camera);
-// 		return;
-// 	}
-// }
-
 bool backfaceCulling(Vec4 & v1, Vec4 &v2, Vec4& v3 ){
 	Vec3 v1_t;
 	Vec3 v2_t;
