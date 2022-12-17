@@ -3,3 +3,5 @@
 culling_disabled_inputs/
 culling_enabled_inputs/
 .vscode/
+different_projection_type/
+clipping_example/

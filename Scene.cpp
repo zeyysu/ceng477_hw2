@@ -75,24 +75,66 @@ void Scene::forwardRenderingPipeline(Camera *camera)
 			 	continue;
 			 }
 
-			//perspective divide
-			std::cout<<v1_t<<std::endl;
-			std::cout<<v2_t<<std::endl;
-			std::cout<<v3_t<<std::endl;
-			if(v1_t.t != 1 && v1_t.t != 0) {v1_t.x = v1_t.x/v1_t.t; v1_t.y = v1_t.y/v1_t.t; v1_t.z = v1_t.z/v1_t.t; v1_t.t = 1;}
-			if(v2_t.t != 1 && v2_t.t != 0) {v2_t.x = v2_t.x/v2_t.t; v2_t.y = v2_t.y/v2_t.t; v2_t.z = v2_t.z/v2_t.t; v2_t.t = 1;}
-			if(v3_t.t != 1 && v3_t.t != 0) {v3_t.x = v3_t.x/v3_t.t; v3_t.y = v3_t.y/v3_t.t; v3_t.z = v3_t.z/v3_t.t; v3_t.t = 1;}
+			if(meshes[i]->type!=1){
+				
+				//perspective divide
+				if(v1_t.t != 1 && v1_t.t != 0) {v1_t.x = v1_t.x/v1_t.t; v1_t.y = v1_t.y/v1_t.t; v1_t.z = v1_t.z/v1_t.t; v1_t.t = 1;}
+				if(v2_t.t != 1 && v2_t.t != 0) {v2_t.x = v2_t.x/v2_t.t; v2_t.y = v2_t.y/v2_t.t; v2_t.z = v2_t.z/v2_t.t; v2_t.t = 1;}
+				if(v3_t.t != 1 && v3_t.t != 0) {v3_t.x = v3_t.x/v3_t.t; v3_t.y = v3_t.y/v3_t.t; v3_t.z = v3_t.z/v3_t.t; v3_t.t = 1;}
+				
+				Vec4 v01_1= v1_t;
+                Vec4 v01_2= v2_t;
+				Vec4 v20_1= v3_t;
+				Vec4 v20_2= v1_t;
+				Vec4 v12_1= v2_t;
+				Vec4 v12_2= v3_t;
+				Color * c1 = this->colorsOfVertices[v1_t.colorId-1];
+				Color * c2 = this->colorsOfVertices[v2_t.colorId-1];
+				Color * c3 = this->colorsOfVertices[v3_t.colorId-1];
+				//clipping
+				bool v1v2Clipped  = clippedLine(this,v01_1, v01_2,*c1,*c2);
+				bool v2v3Clipped = clippedLine(this,v12_1, v12_2,*c2,*c3);
+				bool v3v1Clipped = clippedLine(this,v20_1, v20_2,*c3,*c1);
+				//  if(v01_1.t != 1 && v01_1.t != 0) { v01_1.x =  v01_1.x/ v01_1.t;  v01_1.y =  v01_1.y/ v01_1.t;  v01_1.z =  v01_1.z/ v01_1.t;  v01_1.t = 1;}
+				//  if(v01_2.t != 1 && v01_2.t != 0) { v01_2.x =  v01_2.x/ v01_2.t;  v01_2.y =  v01_2.y/ v01_2.t;  v01_2.z =  v01_2.z/ v01_2.t;  v01_2.t = 1;}
+				//  if(v12_1.t != 1 && v12_1.t != 0) { v12_1.x =  v12_1.x/ v12_1.t;  v12_1.y =  v12_1.y/ v12_1.t;  v12_1.z =  v12_1.z/ v12_1.t;  v12_1.t = 1;}
+				//  if(v12_2.t != 1 && v12_2.t != 0) { v12_2.x =  v12_2.x/ v12_2.t;  v12_2.y =  v12_2.y/ v12_2.t; v12_2.z =  v12_2.z/ v12_2.t;  v12_2.t = 1;}
+				//  if(v20_1.t != 1 && v20_1.t != 0) { v20_1.x =  v20_1.x/ v20_1.t;  v20_1.y =  v20_1.y/ v20_1.t;  v20_1.z =  v20_1.z/ v20_1.t;  v20_1.t = 1;}
+				//  if(v20_2.t != 1 && v20_2.t != 0) { v20_2.x =  v20_2.x/ v20_2.t;  v20_2.y =  v20_2.y/ v20_2.t;  v20_2.z =  v20_2.z/v20_2.t; v20_2.t = 1;}
+				//apply viewport transformation
+				v01_1 = multiplyMatrixWithVec4(viewTr, v01_1);
+				v01_2 = multiplyMatrixWithVec4(viewTr,v01_2);
+				v12_1 = multiplyMatrixWithVec4(viewTr, v12_1);
+				v12_2 = multiplyMatrixWithVec4(viewTr, v12_2);
+				v20_1 = multiplyMatrixWithVec4(viewTr,v20_1);
+				v20_2 = multiplyMatrixWithVec4(viewTr, v20_2);
+				//draw
+				if( v1v2Clipped == true) {
+			
+					drawLine(this,v01_1,v01_2, camera);
+				}
+				if(v2v3Clipped== true) {
 
-			//viewport transformation
-			v1_t = multiplyMatrixWithVec4(viewTr, v1_t);
-			v2_t = multiplyMatrixWithVec4(viewTr, v2_t);
-			v3_t = multiplyMatrixWithVec4(viewTr, v3_t);
+					drawLine(this,v12_1,v12_2, camera);
+				}
+				if(v3v1Clipped== true) {
+		
+					drawLine(this,v20_1,v20_2, camera);
+				}
 
+			}   
+			else{
+				//perspective divide
+				if(v1_t.t != 1 && v1_t.t != 0) {v1_t.x = v1_t.x/v1_t.t; v1_t.y = v1_t.y/v1_t.t; v1_t.z = v1_t.z/v1_t.t; v1_t.t = 1;}
+				if(v2_t.t != 1 && v2_t.t != 0) {v2_t.x = v2_t.x/v2_t.t; v2_t.y = v2_t.y/v2_t.t; v2_t.z = v2_t.z/v2_t.t; v2_t.t = 1;}
+				if(v3_t.t != 1 && v3_t.t != 0) {v3_t.x = v3_t.x/v3_t.t; v3_t.y = v3_t.y/v3_t.t; v3_t.z = v3_t.z/v3_t.t; v3_t.t = 1;}
 
-			std::cout<<v1_t<<std::endl;
-			std::cout<<v2_t<<std::endl;
-			std::cout<<v3_t<<std::endl;
-			raster(this,v1_t,v2_t,v3_t,(meshes[i]->type==1), camera);
+				//viewport transformation
+				v1_t = multiplyMatrixWithVec4(viewTr, v1_t);
+				v2_t = multiplyMatrixWithVec4(viewTr, v2_t);
+				v3_t = multiplyMatrixWithVec4(viewTr, v3_t);
+				triangle_raster(this, v1_t, v2_t, v3_t, camera);
+			}
 			
 		}
 		

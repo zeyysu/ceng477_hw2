@@ -23,5 +23,7 @@ Matrix4 createOrtMatrix(Camera *);
 Matrix4 createPersMatrix(Camera *);
 Matrix4 createViewportMatrix(Camera *);
 Matrix4 modelingTransformations(Scene *, Mesh *);
-void raster(Scene *,Vec4 &, Vec4 &, Vec4 &, bool, Camera* );
 bool backfaceCulling(Vec4 &, Vec4 &, Vec4&);
+bool clippedLine(Scene *,Vec4 &, Vec4 &, Color &, Color &);
+void drawLine(Scene *, Vec4&, Vec4 &, Camera *);
+void triangle_raster(Scene *, Vec4 &, Vec4 &, Vec4 &, Camera *);

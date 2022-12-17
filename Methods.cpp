@@ -311,8 +311,6 @@ void drawLine(Scene *scene, Vec4&v1, Vec4 &v2, Camera *camera){
 		d = 2*dy + 0.5*(x1-x0);
 
 		for(x = x0; x <= x1; x+=1){
-			std::cout<<d<<std::endl;
-			std::cout<<x<<" "<<y<<std::endl;
 			if(x<0) continue;
 			if(y<0){
 				if(y0<y1) {y+=1; continue;}
@@ -435,15 +433,12 @@ void triangle_raster(Scene *scene, Vec4 &v0, Vec4 &v1, Vec4 &v2, Camera *camera)
 
 }
 
-void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid, Camera *camera ){
-	if(solid){
-		triangle_raster(scene, v1,v2,v3,camera);
-		return;
-	}
-	drawLine(scene,v1,v2, camera);
-	drawLine(scene,v2,v3, camera);
-	drawLine(scene,v1,v3, camera);
-}
+// void raster(Scene *scene,Vec4 &v1, Vec4 &v2, Vec4 &v3, bool solid, Camera *camera ){
+// 	if(solid){
+// 		triangle_raster(scene, v1,v2,v3,camera);
+// 		return;
+// 	}
+// }
 
 bool backfaceCulling(Vec4 & v1, Vec4 &v2, Vec4& v3 ){
 	Vec3 v1_t;
@@ -460,4 +455,86 @@ bool backfaceCulling(Vec4 & v1, Vec4 &v2, Vec4& v3 ){
 	if(dot < 0) return true;
 	return false;
 
+}
+
+bool isVisible(double p, double q, double & tE, double & tL) {
+
+		double t = q / p;
+		if (p > 0) {
+			if (t > tL) {
+				return false;
+			} else if (t > tE) {
+				tE = t;
+			}
+		} else if(p < 0) {
+			if (t < tE) {
+				return false;
+			} else if (t < tL) {
+				tL = t;
+			}
+		}
+		else if (q > 0) {
+			return false;
+		}
+	
+	return true;
+}
+
+
+bool clippedLine(Scene *scene,Vec4 & v1_t, Vec4 & v2_t, Color & c1, Color & c2) {
+    bool result = false;
+    Vec4 v0 = v1_t, v1 = v2_t;
+	int bflag = 0;
+    double tE = 0, tL = 1;
+	double d[]= {v1.x-v0.x,v1.y-v0.y,v1.z-v0.z};
+	double  min[] = {-1,-1,-1};
+	double max[] = {1,1,1};
+	double * v[] = {&v0.x,&v0.y,&v0.z};
+	Color dcolor;
+	dcolor.r = c2.r - c1.r;
+	dcolor.g = c2.g - c1.g;
+	dcolor.b = c2.b - c1.b;
+	Color *c1_t =new Color(c1);
+	Color *c2_t = new Color(c2);
+	int newColorId1 = v0.colorId;
+	int newColorId2 = v1.colorId;
+
+	
+	
+	for (int i = 0; i < 3; i++) {
+		if (isVisible(d[i], min[i]-(*v[i]), tE, tL) && isVisible(-d[i], (*v[i])-max[i], tE, tL)) {
+			bflag ++;
+		}
+	}
+		if(bflag == 3){
+			result = true;
+			/* Line is visible */
+			if (tL < 1.0) {
+				v1.x = v0.x + (d[0] * tL);
+				v1.y = v0.y + (d[1] * tL);
+				v1.z = v0.z + (d[2] * tL);
+				c2_t->r = c1_t->r + (dcolor.r * tL);
+				c2_t->g = c1_t->g + (dcolor.g * tL);
+				c2_t->b = c1_t->b + (dcolor.b * tL);
+				scene->colorsOfVertices.push_back(c2_t);
+				newColorId2= scene->colorsOfVertices.size();
+
+			}
+			if (tE > 0.0) {
+				v0.x = v0.x + (d[0] * tE);
+				v0.y = v0.y + (d[1] * tE);
+				v0.z = v0.z + (d[2] * tE);
+				c1_t->r = c1_t->r + (dcolor.r * tE);
+				c1_t->g = c1_t->g + (dcolor.g * tE);
+				c1_t->b = c1_t->b + (dcolor.b * tE);
+				scene->colorsOfVertices.push_back(c1_t);
+				newColorId1= scene->colorsOfVertices.size();
+			}
+		}
+
+	v1_t = v0;
+	v1_t.colorId = newColorId1;
+	v2_t = v1;
+	v2_t.colorId = newColorId2;
+	return result;
 }
